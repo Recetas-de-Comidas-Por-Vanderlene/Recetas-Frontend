@@ -22,3 +22,15 @@ dist-ssr
 *.njsproj
 *.sln
 *.sw?
+
+# Windows system folders
+AppData/
+Cookies/
+Documents/
+Downloads/
+Favorites/
+Music/
+Pictures/
+Videos/
+OneDrive/
+
