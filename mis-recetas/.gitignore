@@ -34,3 +34,18 @@ Pictures/
 Videos/
 OneDrive/
 
+# Directorios y archivos de dependencia
+/node_modules
+/dist
+package-lock.json
+yarn.lock
+# Directorios y archivos de dependencia
+/node_modules
+/dist
+package-lock.json
+yarn.lock
+
+# Archivos de depuración y logs
+npm-debug.log*
+.DS_Store
+Thumbs.db
