@@ -1,0 +1,17 @@
+# Archivos de Git y Node (FUNDAMENTALES en cualquier proyecto JS)
+/node_modules
+/dist
+
+# Archivos de caché, logs y lock
+npm-debug.log
+yarn-error.log
+package-lock.json
+
+# Archivos de configuración de IDEs y OS (Windows/VSCode)
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db
+NTUSER.DAT*
+ntuser.dat.LOG*
+ntuser.ini
