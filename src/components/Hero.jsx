@@ -1,8 +1,8 @@
-// src/components/Hero.jsx
 import React from 'react';
-import HeroBg from '../assets/hero-bg.png'; // Verifica que la ruta sea correcta
+import HeroBg from '../assets/hero-bg.png';
 
-const Hero = () => {
+
+const Hero = ({ onUserClick, isLoggedIn }) => {
   return (
     // Usamos 'relative' para que el icono 'absolute' se posicione dentro del header
     <header
@@ -10,17 +10,20 @@ const Hero = () => {
       style={{ backgroundImage: `url(${HeroBg})` }}
     >
       {/* Ícono de Usuario (Login) en la esquina superior derecha */}
-      {/* Usamos z-10 para asegurar que esté sobre la imagen si fuera necesario */}
-      <div className="absolute top-4 right-6 z-10 cursor-pointer">
+      <div 
+        className="absolute top-4 right-6 z-10 cursor-pointer"
+        onClick={() => {
+          if (!isLoggedIn && onUserClick) onUserClick();
+        }}
+        title={isLoggedIn ? "Ya has iniciado sesión" : "Iniciar sesión"}
+      >
         <svg 
-          // Ajustamos el tamaño a w-5 h-5 para que sea visible pero discreto
-          className="w-6 h-6 text-white hover:text-orange-400" 
+          className={`w-6 h-6 ${isLoggedIn ? 'text-green-400' : 'text-white hover:text-orange-400'}`} 
           fill="none" 
           stroke="currentColor" 
           viewBox="0 0 24 24"
           xmlns="http://www.w3.org/2000/svg"
         >
-          {/* Path para el icono de usuario/login */}
           <path 
             strokeLinecap="round" 
             strokeLinejoin="round" 
@@ -29,7 +32,6 @@ const Hero = () => {
           />
         </svg>
       </div>
-      
     </header>
   );
 };
