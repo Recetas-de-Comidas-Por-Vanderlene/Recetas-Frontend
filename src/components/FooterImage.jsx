@@ -1,53 +1,85 @@
-// src/components/FooterImage.jsx
+// FooterSimpleFood.jsx
 import React from 'react';
 
-// NOTA: Para este ejemplo, usaré imágenes de stock de Unsplash,
-// pero tú deberías usar las tuyas. Asume que las importaste o usaste URLs.
-// Por ahora, solo usaremos el fondo gris oscuro para simular el área.
-
-const FooterImage = () => {
-    // Definimos 6 imágenes para simular el banner
-    const images = [
-        'url(/path/to/img1.jpg)', 
-        'url(/path/to/img2.jpg)', 
-        'url(/path/to/img3.jpg)', 
-        'url(/path/to/img4.jpg)', 
-        'url(/path/to/img5.jpg)', 
-        'url(/path/to/img6.jpg)', 
+const FooterSimpleFood = () => {
+    
+    const mainLinks = [
+        { title: "Recetas Populares", href: "/recetas-populares" },
+        { title: "Ingredientes", href: "/ingredientes" },
+        { title: "Contacto", href: "/contacto" },
+        { title: "Blog", href: "/blog" },
+    ];
+    
+    const legalLinks = [
+        { title: "Política de Privacidad", href: "/privacidad" },
+        { title: "Términos de Uso", href: "/terminos" },
     ];
 
-    // La altura del contenedor será fija para replicar el banner
-    const bannerHeight = 'h-52 md:h-64'; 
-    
     return (
-        <div className={`relative w-full overflow-hidden ${bannerHeight}`}>
-            {/* Usamos Grid para dividir el espacio en 6 columnas (md:grid-cols-6)
-              En móviles, simplemente apilamos las imágenes si fuera necesario, 
-              pero para un banner se recomienda mantener la proporción con overflow. 
-            */}
-            
-            <div className="flex w-full h-full">
-                {images.map((img, index) => (
-                    <div
-                        key={index}
-                        // La clase 'flex-1' hace que todas ocupen el mismo ancho
-                        className={`flex-1 ${bannerHeight} bg-cover bg-center transition-transform duration-500 hover:scale-105`}
-                        // En un proyecto real, usarías la etiqueta <img /> o
-                        // cargarías una imagen aquí. Usamos un color/URL para simular.
-                        style={{
-                            backgroundImage: img,
-                            backgroundColor: `hsl(${index * 60}, 50%, 40%)` // Simulación de colores si no hay imagen
-                        }}
-                    />
-                ))}
-            </div>
+        // 1. AJUSTE: Reducimos el relleno vertical de py-10 md:py-12 a py-8 md:py-10
+        <footer className="bg-gray-900 text-gray-400 py-4 md:py-10">
+            {/* 2. AJUSTE: Reducimos el ancho máximo de max-w-7xl a max-w-6xl */}
+            <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-4">
+                
+                {/* GRID Principal para la distribución de contenido */}
+                <div className="grid grid-cols-2 md:grid-cols-3 gap-6 pb-6 border-b border-gray-700">
+                    
+                    {/* Columna 1: Logo/Título y Contacto */}
+                    <div className="col-span-2 md:col-span-1">
+                        <h3 className="text-xl font-bold text-orange-500 mb-2"> {/* Reducimos el tamaño del título */}
+                            Vuelta al Mundo
+                        </h3>
+                        <p className="text-sm mb-3">
+                            Descubre los sabores auténticos de cada rincón del planeta con nuestras recetas.
+                        </p>
+                        <h4 className="font-bold text-white mb-1 text-sm">Contacto Directo:</h4> {/* Reducimos el tamaño del subtítulo */}
+                        <p className="text-xs">
+                            <a href="mailto:info@recetas.com" className="hover:text-orange-400 transition">info@recetas.com</a>
+                        </p>
+                    </div>
 
-            {/* Este es el botón de acción flotante que se ve en tu diseño, si lo deseas */}
-            <div className="absolute bottom-4 right-4 z-10 p-2 bg-white rounded-full shadow-lg cursor-pointer">
-                <span className="text-xl">⬇️</span> {/* O un ícono de flecha */}
+                    {/* Columna 2: Navegación Rápida */}
+                    <div>
+                        <h4 className="font-bold text-white mb-3 text-sm">Explorar</h4> {/* Reducimos el tamaño del subtítulo */}
+                        <ul className="space-y-1"> {/* Reducimos el espacio entre elementos */}
+                            {mainLinks.map((link) => (
+                                <li key={link.title}>
+                                    <a 
+                                        href={link.href}
+                                        className="hover:text-orange-400 transition text-xs" // Reducimos el tamaño del texto
+                                    >
+                                        {link.title}
+                                    </a>
+                                </li>
+                            ))}
+                        </ul>
+                    </div>
+
+                    {/* Columna 3: Información Legal */}
+                    <div>
+                        <h4 className="font-bold text-white mb-3 text-sm">Legal</h4>
+                        <ul className="space-y-1">
+                            {legalLinks.map((link) => (
+                                <li key={link.title}>
+                                    <a 
+                                        href={link.href}
+                                        className="hover:text-orange-400 transition text-xs"
+                                    >
+                                        {link.title}
+                                    </a>
+                                </li>
+                            ))}
+                        </ul>
+                    </div>
+                </div>
+
+                {/* Sección de Copyright Final */}
+                <div className="mt-6 pt-3 text-center text-xs text-gray-600 border-t border-gray-800"> {/* Reducimos margen y padding */}
+                    © {new Date().getFullYear()} Vuelta al Mundo con Recetas. Todos los derechos reservados.
+                </div>
             </div>
-        </div>
+        </footer>
     );
 };
 
-export default FooterImage;
+export default FooterSimpleFood;
