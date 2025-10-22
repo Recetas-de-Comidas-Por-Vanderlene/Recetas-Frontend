@@ -1,16 +1,62 @@
-# React + Vite
+# 🌎 Mis Recetas - Vuelta al Mundo
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+Descubre y comparte recetas de todo el mundo. Explora sabores por país, organiza tu menú semanal y conecta con una comunidad global de amantes de la cocina.
 
-Currently, two official plugins are available:
+---
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) (or [oxc](https://oxc.rs) when used in [rolldown-vite](https://vite.dev/guide/rolldown)) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+## 🚀 Tecnologías Utilizadas
 
-## React Compiler
+- **React** + **Vite**: Desarrollo rápido y moderno de interfaces.
+- **Tailwind CSS**: Estilos utilitarios y personalización visual.
+- **React Icons**: Íconos sociales y decorativos.
+- **ESLint**: Calidad y consistencia de código.
+- **PostCSS** + **Autoprefixer**: Procesamiento avanzado de CSS.
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+---
 
-## Expanding the ESLint configuration
+## 📦 Instalación
 
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
+1. **Clona el repositorio:**
+   ```sh
+   git clone https://github.com/tu-usuario/mis-recetas.git
+   cd mis-recetas
+   ```
+2. **Instala las dependencias:**
+   ```sh
+   npm install
+   ```
+3. **Inicia el servidor de desarrollo:**
+   ```sh
+   npm run dev
+   ```
+
+---
+
+## 📚 Guía Rápida
+
+- **Explorar Recetas:** Navega por las recetas disponibles y filtra por país o ingrediente.
+- **Agregar Nueva Receta:** Contribuye con tus propias recetas fácilmente.
+- **Menú Semanal:** Organiza tus comidas arrastrando recetas a la cuadrícula del menú.
+- **Lista de Compras:** Genera y descarga una lista de compras basada en tu menú.
+
+---
+
+## 🤝 Contribuciones
+
+Las contribuciones son bienvenidas! Por favor, sigue estos pasos:
+
+1. **Fork el repositorio**
+2. **Crea una nueva rama** (`git checkout -b feature/nueva-receta`)
+3. **Haz tus cambios y commitea** (`git commit -m 'Agrega nueva receta'`)
+4. **Push a la rama** (`git push origin feature/nueva-receta`)
+5. **Crea un Pull Request**
+
+---
+
+## 📄 Licencia
+
+Este proyecto está bajo la licencia MIT. Consulta el archivo `LICENSE` para más detalles.
+
+---
+
+¡Gracias por visitar Mis Recetas! Esperamos que disfrutes explorando y compartiendo recetas tanto como nosotros disfrutamos creándolo.
