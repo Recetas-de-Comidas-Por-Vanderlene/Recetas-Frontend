@@ -69,4 +69,10 @@ button:focus-visible {
   button {
     background-color: #f9f9f9;
   }
+  .modal-sm-custom {
+  /* Ancho fijo muy estrecho */
+  max-width: 250px; 
+  /* Asegura que no se expanda más allá de ese ancho */
+  width: 100%; 
+}
 }
