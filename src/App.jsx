@@ -7,11 +7,13 @@ import FooterImage from './components/FooterImage';
 import Login from './components/Login';
 import Register from './components/Register'; 
 import RecipeForm from './components/RecipeForm'; 
+import AllRecipes from './components/AllRecipes'; // <-- NUEVA IMPORTACIÓN
 
 // Definimos los tipos de vista principal que podemos tener
 const VIEWS = {
     HOME: 'home',
     RECIPE_FORM: 'recipeForm',
+    ALL_RECIPES: 'allRecipes', // <-- NUEVA VISTA
 };
 
 
@@ -70,6 +72,8 @@ function App() {
     // --- Funciones para cambiar la vista principal ---
     const handleViewHome = () => setMainView(VIEWS.HOME);
     
+    const handleViewAllRecipes = () => setMainView(VIEWS.ALL_RECIPES); // <-- NUEVA FUNCIÓN
+    
     const handleViewRecipeForm = () => {
         if (isLoggedIn) {
             setMainView(VIEWS.RECIPE_FORM);
@@ -97,6 +101,14 @@ function App() {
             return (
                 <div className="py-12 px-4 md:px-8">
                     <RecipeForm onRecipeSuccess={handleRecipeSuccess} />
+                </div>
+            );
+        }
+        
+        if (mainView === VIEWS.ALL_RECIPES) { // <-- NUEVO CASO
+            return (
+                <div className="py-12 px-4 md:px-8">
+                    <AllRecipes isLoggedIn={isLoggedIn} /> 
                 </div>
             );
         }
@@ -130,6 +142,7 @@ function App() {
                 isLoggedIn={isLoggedIn}
                 onNavigateHome={handleViewHome}
                 onNavigateRecipeForm={handleViewRecipeForm}
+                onNavigateAllRecipes={handleViewAllRecipes} // <-- NUEVA PROP
             />
 
             {renderMainContent()}

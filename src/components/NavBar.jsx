@@ -1,9 +1,10 @@
-// src/components/NavBar.jsx
 import React from "react";
 import { FaInstagram, FaFacebookF, FaTwitter } from "react-icons/fa";
 
-const NavBar = () => {
-  const linkClasses = "text-white hover:text-gray-200 transition duration-300 px-2 py-1";
+// Recibe las props necesarias para la navegación
+const NavBar = ({ isLoggedIn, onNavigateHome, onNavigateRecipeForm, onNavigateAllRecipes }) => {
+  // Se añadió 'cursor-pointer' para mejor UX
+  const linkClasses = "text-white hover:text-gray-200 transition duration-300 px-2 py-1 cursor-pointer"; 
   const socialIconClasses = "text-black hover:text-gray-200 transition duration-300 text-lg";
 
   const socialLinks = [
@@ -16,9 +17,13 @@ const NavBar = () => {
     <nav className="bg-orange-400 text-white p-4 shadow-xl flex justify-between items-center">
       {/* Links de navegación */}
       <div className="flex space-x-6 font-semibold text-lg">
-        <a href="#home" className={linkClasses}>Home</a>
-        <a href="#recetas" className={linkClasses}>Recetas</a>
-        <a href="#contactos" className={linkClasses}>Contactos</a>
+        {/* Usamos onClick para cambiar la vista principal en App.js */}
+        <div onClick={onNavigateHome} className={linkClasses}>Home</div>
+        
+        {/* Enlace de Recetas ahora usa la función de navegación */}
+        <div onClick={onNavigateAllRecipes} className={linkClasses}>Recetas</div> 
+        
+        <div className={linkClasses}>Contactos</div>
       </div>
 
       {/* Íconos sociales */}
