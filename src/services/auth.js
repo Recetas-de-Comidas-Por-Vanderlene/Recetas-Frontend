@@ -15,8 +15,9 @@ export async function login(email, password) {
 
   if (!response.ok) {
    // Captura mensajes de error del backend (si los hay)
-   const errorData = await response.json();
-   throw new Error(errorData.message || 'Login failed');
+//    const errorData = await response.json();
+//    throw new Error(errorData.message || 'Login failed');
+throw new Error('Login failed');
   }
 
   const data = await response.json();

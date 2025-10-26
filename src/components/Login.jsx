@@ -8,20 +8,17 @@ export default function Login({ onLoginSuccess, onNavigateToSignup }) {
  const [password, setPassword] = useState("");
  const [error, setError] = useState("");
 
- const handleLogin = async (e) => {
-  e.preventDefault();
-  try {
-   const response = await login(email, password);
-   if (response.success) {
-	onLoginSuccess(response.data);
-   } else {
-	setError(response.message || "Error al iniciar sesión");
-   }
-  } catch (error) {
-   setError("Error al iniciar sesión");
-   console.error("Login failed", error);
-  }
- };
+const handleLogin = async (e) => {
+    e.preventDefault();
+    setError("");
+
+    try {
+      const data = await login(email, password);
+      onLoginSuccess(data);
+    } catch (error) {
+      setError("Usuario o contraseña incorrectos");
+    }
+  };
 
  return (
   
