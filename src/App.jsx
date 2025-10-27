@@ -7,13 +7,13 @@ import FooterImage from './components/FooterImage';
 import Login from './components/Login';
 import Register from './components/Register'; 
 import RecipeForm from './components/RecipeForm'; 
-import AllRecipes from './components/AllRecipes'; 
+import AllRecipes from './components/AllRecipes';
 
 // Definimos los tipos de vista principal que podemos tener
 const VIEWS = {
   HOME: 'home',
   RECIPE_FORM: 'recipeForm',
-  ALL_RECIPES: 'allRecipes',
+  ALL_RECIPES: 'allRecipes', // Solo necesitamos esta
 };
 
 
@@ -72,14 +72,14 @@ function App() {
   // --- Funciones para cambiar la vista principal ---
   const handleViewHome = () => setMainView(VIEWS.HOME);
   
+  // Única función para ir a la vista de recetas (todas)
   const handleViewAllRecipes = () => setMainView(VIEWS.ALL_RECIPES);
   
-  // Esta es la función que queremos pasar al botón "Crear Receta"
   const handleViewRecipeForm = () => {
     if (isLoggedIn) {
       setMainView(VIEWS.RECIPE_FORM);
     } else {
-      setCurrentAuthView('login'); // Pide login si no está logueado
+      setCurrentAuthView('login'); 
     }
   };
   
@@ -106,13 +106,14 @@ function App() {
       );
     }
     
-    if (mainView === VIEWS.ALL_RECIPES) { 
+    // 🚨 Solo necesitamos este bloque de renderizado 🚨
+    if (mainView === VIEWS.ALL_RECIPES) {
       return (
         <div className="py-12 px-4 md:px-8">
-          {/* 🚨 AÑADIDO: Pasamos la función al componente AllRecipes 🚨 */}
           <AllRecipes 
                         isLoggedIn={isLoggedIn} 
                         onNavigateToCreate={handleViewRecipeForm} 
+                        currentUserName={nombre} // Pasamos el nombre para el filtrado
                     /> 
         </div>
       );
