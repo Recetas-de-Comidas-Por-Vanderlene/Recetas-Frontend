@@ -15,7 +15,8 @@ const toggleFavorite = (recipeId) => {
     return favorites;
 };
 
-const AllRecipes = ({ isLoggedIn }) => {
+// 🚨 CAMBIO CRÍTICO: Recibe la nueva prop: onNavigateToCreate 🚨
+const AllRecipes = ({ isLoggedIn, onNavigateToCreate }) => {
     const [recipes, setRecipes] = useState([]);
     const [favorites, setFavorites] = useState([]);
     const [isLoading, setIsLoading] = useState(true);
@@ -27,19 +28,27 @@ const AllRecipes = ({ isLoggedIn }) => {
         setFavorites(storedFavorites.map(String));
 
         const fetchRecipes = async () => {
+            // 🚨 RECORDATORIO: Si tu API requiere JWT, DEBES incluir el token aquí
+            const token = localStorage.getItem('jwtToken'); 
+            const headers = {
+                'Accept': 'application/json',
+                'Content-Type': 'application/json'
+            };
+            if (token) {
+                headers['Authorization'] = `Bearer ${token}`;
+            }
+            
             try {
                 const response = await fetch(`${API_BASE_URL}/api/recetas`, {
                     credentials: 'include',
-                    headers: {
-                        'Accept': 'application/json',
-                        'Content-Type': 'application/json'
-                    }
+                    headers: headers, // Usamos los headers con o sin token
                 });
                 if (!response.ok) throw new Error(`Error HTTP: ${response.status}`);
                 const data = await response.json();
-                setRecipes(data);
+                setRecipes(data); 
             } catch (err) {
-                setError("No se pudieron cargar las recetas.");
+                // Muestra un error más claro si falla la carga
+                setError("No se pudieron cargar las recetas. Verifica tu backend y la consola para más detalles.");
             } finally {
                 setIsLoading(false);
             }
@@ -66,11 +75,29 @@ const AllRecipes = ({ isLoggedIn }) => {
 
     return (
         <div className="max-w-6xl mx-auto px-4 py-8">
-            <h1 className="text-3xl font-bold mb-6 text-gray-800 dark:text-gray-100 text-center">
-                Recetas del Mundo 🌎
-            </h1>
+            
+            {/* 🚨 NUEVA SECCIÓN DE ENCABEZADO CON BOTÓN DE CREAR 🚨 */}
+            <div className="flex justify-between items-center mb-6">
+                <h1 className="text-3xl font-bold text-gray-800 dark:text-gray-100">
+                    Recetas del Mundo 
+                </h1>
+                
+                {/* El botón solo aparece si está logueado Y si la prop fue pasada */}
+                {isLoggedIn && onNavigateToCreate && (
+                    <motion.button
+                        whileHover={{ scale: 1.05 }}
+                        whileTap={{ scale: 0.95 }}
+                        // 🚨 Usamos la función pasada por App.jsx 🚨
+                        onClick={onNavigateToCreate} 
+                        className="bg-orange-500 hover:bg-orange-600 text-white font-semibold py-2 px-4 rounded-full shadow-lg transition-colors duration-300 flex items-center space-x-2 text-sm"
+                    >
+                        <span>+ Crear Receta</span>
+                    </motion.button>
+                )}
+            </div>
+            {/* FIN DE LA NUEVA SECCIÓN */}
 
-            {/* Botones para alternar vistas */}
+            {/* Botones para alternar vistas (Favoritos/Todas) */}
             <div className="flex justify-center space-x-4 mb-10">
                 <button
                     onClick={() => setView('all')}
@@ -95,7 +122,7 @@ const AllRecipes = ({ isLoggedIn }) => {
                 </button>
             </div>
 
-            {/* Lista con animación */}
+            {/* Lista de Recetas */}
             <AnimatePresence mode="wait">
                 <motion.div
                     key={view}
@@ -131,7 +158,7 @@ const AllRecipes = ({ isLoggedIn }) => {
                                         </motion.span>
                                     </motion.button>
 
-                                    {/* Imagen (si existe) */}
+                                    {/* Imagen y Contenido de la receta */}
                                     {recipe.fotoUrl ? (
                                         <img
                                             src={recipe.fotoUrl}
@@ -144,7 +171,6 @@ const AllRecipes = ({ isLoggedIn }) => {
                                         </div>
                                     )}
 
-                                    {/* Contenido de la receta */}
                                     <div>
                                         <h2 className="text-xl font-semibold mb-1 text-gray-900 dark:text-gray-100">
                                             {recipe.titulo}
