@@ -13,7 +13,15 @@ const CountryFilter = () => {
         backgroundSize: 'contain', 
         backgroundPosition: 'center',
     };
-
+    const cargarRecetas = async (pais) => {
+    try {
+        const res = await fetch(`http://localhost:5173/api/recetas/pais?nombrePais=${pais}`);
+        const data = await res.json();
+        setRecetas(data);
+    } catch (err) {
+        console.error('Error cargando recetas:', err);
+    }
+};
     return (
         // Contenedor principal: color de fondo cambia con el tema
         <div className="relative pt-12 pb-24 px-4 bg-white dark:bg-gray-900"> 
@@ -29,6 +37,7 @@ const CountryFilter = () => {
                     Filtrar Recetas por País
                 </p>
             </div>
+            
             
             {/* Contenedor del Mapa y los Filtros */}
             <div className="relative max-w-7xl mx-auto">
