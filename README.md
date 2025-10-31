@@ -105,9 +105,6 @@ La aplicación se conecta a una API REST en `http://localhost:8080/api/` con los
 - `PUT /recipes/:id` - Actualizar receta
 - `DELETE /recipes/:id` - Eliminar receta
 
-### Usuarios
-- `GET /users/profile` - Perfil de usuario
-- `PUT /users/profile` - Actualizar perfil
 
 ## 🤝 Contribución
 
