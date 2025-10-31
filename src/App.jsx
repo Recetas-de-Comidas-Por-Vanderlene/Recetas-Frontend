@@ -1,19 +1,22 @@
-import React, { useState, useEffect } from 'react'; 
+import React, { useState, useEffect } from 'react';
+import { Routes, Route, useNavigate, Navigate } from 'react-router-dom';
 import Hero from './components/Hero';
 import NavBar from './components/NavBar';
 import SectionIntro from './components/SectionIntro';
 import CountryFilter from './components/CountryFilter';
 import FooterImage from './components/FooterImage';
 import Login from './components/Login';
-import Register from './components/Register'; 
-import RecipeForm from './components/RecipeForm'; 
+import Register from './components/Register';
+import RecipeForm from './components/RecipeForm';
 import AllRecipes from './components/AllRecipes';
+import RecipeDetail from './components/RecipeDetail';
+import EditRecipe from './components/EditRecipe';
 
 // Definimos los tipos de vista principal que podemos tener
 const VIEWS = {
   HOME: 'home',
   RECIPE_FORM: 'recipeForm',
-  ALL_RECIPES: 'allRecipes', // Solo necesitamos esta
+  ALL_RECIPES: 'allRecipes',
 };
 
 
@@ -72,14 +75,14 @@ function App() {
   // --- Funciones para cambiar la vista principal ---
   const handleViewHome = () => setMainView(VIEWS.HOME);
   
-  // Única función para ir a la vista de recetas (todas)
   const handleViewAllRecipes = () => setMainView(VIEWS.ALL_RECIPES);
   
+  // Esta es la función que queremos pasar al botón "Crear Receta"
   const handleViewRecipeForm = () => {
     if (isLoggedIn) {
       setMainView(VIEWS.RECIPE_FORM);
     } else {
-      setCurrentAuthView('login'); 
+      setCurrentAuthView('login'); // Pide login si no está logueado
     }
   };
   
@@ -96,46 +99,30 @@ function App() {
     setSuccessMessage('');
   }
 
-  // --- Renderizado Condicional del Contenido Principal ---
-  const renderMainContent = () => {
-    if (mainView === VIEWS.RECIPE_FORM) {
-      return (
-        <div className="py-12 px-4 md:px-8">
-          <RecipeForm onRecipeSuccess={handleRecipeSuccess} />
-        </div>
-      );
-    }
-    
-    // 🚨 Solo necesitamos este bloque de renderizado 🚨
-    if (mainView === VIEWS.ALL_RECIPES) {
-      return (
-        <div className="py-12 px-4 md:px-8">
-          <AllRecipes 
-                        isLoggedIn={isLoggedIn} 
-                        onNavigateToCreate={handleViewRecipeForm} 
-                        currentUserName={nombre} // Pasamos el nombre para el filtrado
-                    /> 
-        </div>
-      );
-    }
-    
-    return (
-      <main>
-        <section className="py-12 px-4 md:px-8">
-          <SectionIntro username={nombre} />
-        </section>
+  // Componente para la página de inicio
+  const Home = () => (
+    <main>
+      <section className="py-12 px-4 md:px-8">
+        <SectionIntro username={nombre} />
+      </section>
+      <section className="py-12">
+        <CountryFilter />
+      </section>
+    </main>
+  );
 
-        <section className="py-12">
-          <CountryFilter />
-        </section>
-      </main>
-    );
+  // Componente protegido que verifica si el usuario está autenticado
+  const ProtectedRoute = ({ children }) => {
+    if (!isLoggedIn) {
+      handleOpenLogin();
+      return <Navigate to="/" />;
+    }
+    return children;
   };
   // --------------------------------------------------------
 
   return (
     <div className={`min-h-screen bg-white dark:bg-gray-900 text-gray-900 dark:text-gray-100`}>
-      
       <Hero 
         onUserClick={handleOpenLogin} 
         isLoggedIn={isLoggedIn} 
@@ -146,12 +133,29 @@ function App() {
       
       <NavBar 
         isLoggedIn={isLoggedIn}
-        onNavigateHome={handleViewHome}
-        onNavigateRecipeForm={handleViewRecipeForm}
-        onNavigateAllRecipes={handleViewAllRecipes}
       />
 
-      {renderMainContent()}
+      <Routes>
+        <Route path="/" element={<Home />} />
+        <Route path="/recetas" element={
+          <div className="py-12 px-4 md:px-8">
+            <AllRecipes isLoggedIn={isLoggedIn} />
+          </div>
+        } />
+        <Route path="/receta/:id" element={<RecipeDetail isLoggedIn={isLoggedIn} />} />
+        <Route path="/recetas/:id/editar" element={
+          <ProtectedRoute>
+            <EditRecipe />
+          </ProtectedRoute>
+        } />
+        <Route path="/crear-receta" element={
+          <ProtectedRoute>
+            <div className="py-12 px-4 md:px-8">
+              <RecipeForm onRecipeSuccess={handleRecipeSuccess} />
+            </div>
+          </ProtectedRoute>
+        } />
+      </Routes>
       
       <FooterImage />
 

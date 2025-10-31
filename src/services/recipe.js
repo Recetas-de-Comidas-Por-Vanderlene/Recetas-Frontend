@@ -1,6 +1,6 @@
 // src/services/recipe.js
 
-const API_URL = 'http://localhost:8080/api/recipes'; // Asume la ruta de tu API
+const API_URL = 'http://localhost:8080/api/recetas'; // Asume la ruta de tu API
 
 export async function createRecipe(dataToSend) {
     try {

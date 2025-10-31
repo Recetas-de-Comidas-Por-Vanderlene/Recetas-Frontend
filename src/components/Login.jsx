@@ -14,9 +14,16 @@ const handleLogin = async (e) => {
 
     try {
       const data = await login(email, password);
-      onLoginSuccess(data);
+      // Guardar el token JWT y el id del usuario en localStorage
+      if (data && data.token) {
+        localStorage.setItem('jwtToken', data.token);
+        localStorage.setItem('userId', data.id); // Guardar el id del usuario
+        onLoginSuccess(data);
+      } else {
+        throw new Error('No se recibió el token del servidor');
+      }
     } catch (error) {
-      setError("Usuario o contraseña incorrectos");
+      setError(error.message || "Usuario o contraseña incorrectos");
     }
   };
 

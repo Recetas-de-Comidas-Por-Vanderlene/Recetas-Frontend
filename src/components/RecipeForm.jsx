@@ -1,24 +1,41 @@
 // src/components/RecipeForm.jsx (Diseño de Página Completa)
 
 import React, { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
+
+const API_BASE_URL = 'http://localhost:8080';
 
 // Datos de países simulados
 const DUMMY_COUNTRIES = [
-    { id: '1', nombre: 'México' },
-    { id: '2', nombre: 'Colombia' },
-    { id: '3', nombre: 'Perú' },
-    { id: '4', nombre: 'Argentina' },
+    { id: '3', nombre: 'Brasil' },
+    { id: '4', nombre: 'México' },
+    { id: '5', nombre: 'España' },
+    { id: '6', nombre: 'Italia' },
+    { id: '7', nombre: 'Japón' },
+    { id: '8', nombre: 'India' },
 ];
 
 export default function RecipeForm({ onRecipeSuccess }) {
+    const navigate = useNavigate();
     const [formData, setFormData] = useState({
-        nombre: '',
+        titulo: '',
         descripcion: '',
         paisId: '',
-        foto: null, 
+        fotoUrl: '',
+        duracionMinutos: 30,
+        dificultad: 'Media'
     });
-    const [ingredientes, setIngredientes] = useState(['']);
-    const [pasos, setPasos] = useState(['']);
+    const [ingredientes, setIngredientes] = useState([{
+        nombre: '',
+        cantidad: '',
+        unidad: '',
+        descripcion: ''
+    }]);
+    const [pasos, setPasos] = useState([{
+        descripcion: '',
+        orden: 1,
+        fotoUrl: ''
+    }]);
     const [countries, setCountries] = useState([]);
     const [error, setError] = useState('');
     const [isSubmitting, setIsSubmitting] = useState(false);
@@ -36,47 +53,83 @@ export default function RecipeForm({ onRecipeSuccess }) {
         setError('');
     };
 
-    const handlePhotoChange = (e) => {
-        const file = e.target.files[0];
-        setFormData(prevData => ({ ...prevData, foto: file }));
-        setError('');
-    };
     
-    const handleListItemChange = (type, index, value) => {
-        const setter = type === 'ingredientes' ? setIngredientes : setPasos;
-        const currentList = type === 'ingredientes' ? ingredientes : pasos;
-
-        const updatedList = currentList.map((item, i) => 
-            i === index ? value : item
+    const handleIngredienteChange = (index, field, value) => {
+        setIngredientes(prev =>
+            prev.map((item, i) => i === index ? { ...item, [field]: value } : item)
         );
-        setter(updatedList);
     };
 
-    const handleAddListItem = (type) => {
-        const setter = type === 'ingredientes' ? setIngredientes : setPasos;
-        setter(prevList => [...prevList, '']);
+    const handlePasoChange = (index, field, value) => {
+        setPasos(prev =>
+            prev.map((item, i) => i === index ? { ...item, [field]: value } : item)
+        );
     };
 
-    const handleRemoveListItem = (type, index) => {
-        const setter = type === 'ingredientes' ? setIngredientes : setPasos;
-        setter(prevList => prevList.filter((_, i) => i !== index));
+    const handleAddIngrediente = () => {
+        setIngredientes(prev => [...prev, {
+            nombre: '',
+            cantidad: '',
+            unidad: '',
+            descripcion: ''
+        }]);
+    };
+
+    const handleAddPaso = () => {
+        setPasos(prev => [...prev, {
+            descripcion: '',
+            orden: prev.length + 1,
+            fotoUrl: ''
+        }]);
+    };
+
+    const handleRemoveIngrediente = (index) => {
+        setIngredientes(prev => prev.filter((_, i) => i !== index));
+    };
+
+    const handleRemovePaso = (index) => {
+        setPasos(prev => {
+            const newPasos = prev.filter((_, i) => i !== index);
+            // Reordenar los pasos
+            return newPasos.map((paso, i) => ({
+                ...paso,
+                orden: i + 1
+            }));
+        });
     };
 
     // --- Validación (se mantiene igual) ---
 
     const validate = () => {
-        if (!formData.nombre || !formData.descripcion || !formData.paisId) {
-            setError('🚨 Por favor, completa los campos de Nombre, Descripción y País.');
+        if (!formData.titulo || !formData.descripcion || !formData.paisId) {
+            setError('🚨 Por favor, completa los campos de Título, Descripción y País.');
             return false;
         }
-        if (ingredientes.filter(i => i.trim()).length === 0) {
-            setError('🚨 Debes añadir al menos un ingrediente.');
+        if (!formData.duracionMinutos || formData.duracionMinutos < 1) {
+            setError('🚨 La duración debe ser mayor a 0 minutos.');
             return false;
         }
-        if (pasos.filter(p => p.trim()).length === 0) {
+        if (!formData.dificultad) {
+            setError('🚨 Por favor, selecciona una dificultad.');
+            return false;
+        }
+
+        // Validar ingredientes
+        const ingredientesValidos = ingredientes.some(i => 
+            i.nombre.trim() && i.cantidad.trim() && i.unidad.trim()
+        );
+        if (!ingredientesValidos) {
+            setError('🚨 Debes añadir al menos un ingrediente con nombre, cantidad y unidad.');
+            return false;
+        }
+
+        // Validar pasos
+        const pasosValidos = pasos.some(p => p.descripcion.trim());
+        if (!pasosValidos) {
             setError('🚨 Debes describir al menos un paso.');
             return false;
         }
+
         return true;
     };
 
@@ -87,28 +140,79 @@ export default function RecipeForm({ onRecipeSuccess }) {
         e.preventDefault();
         setError('');
 
+        // Validación del formulario
         if (!validate()) return;
 
+        // Verificar si el usuario está logueado
+        const token = localStorage.getItem('jwtToken');
+        if (!token) {
+            setError('🔐 Debes iniciar sesión para registrar una receta');
+            return;
+        }
+
         setIsSubmitting(true);
-        
-        console.log("--- Datos de Receta a Guardar (Simulado) ---");
-        // ... (resto del log) ...
-        
-        await new Promise(resolve => setTimeout(resolve, 1500)); 
 
         try {
-            alert('✅ Receta registrada con éxito! (Simulación de backend)');
-            
-            // Limpiar formulario
-            setFormData({ nombre: '', descripcion: '', paisId: '', foto: null });
+            // Preparar el objeto JSON con los campos requeridos
+            const recetaData = {
+                titulo: formData.titulo,
+                descripcion: formData.descripcion,
+                duracionMinutos: parseInt(formData.duracionMinutos),
+                dificultad: formData.dificultad,
+                fotoUrl: formData.fotoUrl,
+                paisId: parseInt(formData.paisId),
+                ingredientes: ingredientes
+                    .filter(i => i.nombre.trim() && i.cantidad.trim() && i.unidad.trim())
+                    .map(i => ({
+                        nombre: i.nombre.trim(),
+                        cantidad: i.cantidad.trim(),
+                        unidad: i.unidad.trim(),
+                        descripcion: i.descripcion.trim()
+                    })),
+                pasos: pasos
+                    .filter(p => p.descripcion.trim())
+                    .map((p, index) => ({
+                        orden: index + 1,
+                        descripcion: p.descripcion.trim(),
+                        fotoUrl: p.fotoUrl.trim()
+                    }))
+            };
+
+            // Enviar petición al backend como JSON
+            const response = await fetch(`${API_BASE_URL}/api/recetas`, {
+                method: 'POST',
+                headers: {
+                    'Authorization': `Bearer ${token}`,
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(recetaData)
+            });
+
+            if (!response.ok) {
+                const errorData = await response.json();
+                throw new Error(errorData.message || 'Error al registrar la receta');
+            }
+
+            // Éxito - limpiar formulario
+            alert('✅ Receta registrada con éxito!');
+            setFormData({
+                titulo: '',
+                descripcion: '',
+                paisId: '',
+                fotoUrl: '',
+                duracionMinutos: 30,
+                dificultad: 'Media'
+            });
             setIngredientes(['']);
             setPasos(['']);
             
-            // Llama al handler de éxito (ej: volver a la vista HOME en App.jsx)
-            if (onRecipeSuccess) onRecipeSuccess(); 
+            // Llamar al callback de éxito si existe
+            if (onRecipeSuccess) {
+                onRecipeSuccess();
+            }
 
         } catch (err) {
-            setError('❌ Error interno de simulación.');
+            setError(`❌ ${err.message || 'Error al registrar la receta'}`);
         } finally {
             setIsSubmitting(false);
         }
@@ -139,13 +243,47 @@ export default function RecipeForm({ onRecipeSuccess }) {
                      {/* Campos de texto y textarea */}
                       <input
                         type="text"
-                        name="nombre"
-                        placeholder="Nombre de la Receta"
-                        value={formData.nombre}
+                        name="titulo"
+                        placeholder="Título de la Receta"
+                        value={formData.titulo}
                         onChange={handleChange}
                         className="w-full p-4 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 placeholder-gray-500 dark:placeholder-gray-400 focus:ring-2 focus:ring-red-500"
                         required
                     />
+                    
+                    <div className="grid grid-cols-2 gap-4">
+                        <div>
+                            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                                Duración (minutos)
+                            </label>
+                            <input
+                                type="number"
+                                name="duracionMinutos"
+                                min="1"
+                                value={formData.duracionMinutos}
+                                onChange={handleChange}
+                                className="w-full p-4 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100"
+                                required
+                            />
+                        </div>
+                        
+                        <div>
+                            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                                Dificultad
+                            </label>
+                            <select
+                                name="dificultad"
+                                value={formData.dificultad}
+                                onChange={handleChange}
+                                className="w-full p-4 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100"
+                                required
+                            >
+                                <option value="Fácil">Fácil</option>
+                                <option value="Media">Media</option>
+                                <option value="Difícil">Difícil</option>
+                            </select>
+                        </div>
+                    </div>
                     <textarea
                         name="descripcion"
                         placeholder="Descripción corta de la receta"
@@ -171,19 +309,19 @@ export default function RecipeForm({ onRecipeSuccess }) {
                         ))}
                     </select>
 
-                    {/* Subida de Foto */}
+                    {/* URL de la Foto */}
                     <div>
-                        <label className="block text-lg font-medium text-gray-700 dark:text-gray-300 mb-2">
-                            Subir Foto de la Receta
+                        <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                            URL de la Foto de la Receta
                         </label>
                         <input
-                            type="file"
-                            name="foto"
-                            accept="image/*"
-                            onChange={handlePhotoChange}
-                            className="w-full text-base text-gray-500 dark:text-gray-400 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-base file:font-semibold file:bg-orange-50 file:text-orange-700 hover:file:bg-orange-100 dark:file:bg-orange-900 dark:file:text-orange-300 dark:hover:file:bg-orange-800"
+                            type="url"
+                            name="fotoUrl"
+                            placeholder="https://ejemplo.com/foto.jpg"
+                            value={formData.fotoUrl}
+                            onChange={handleChange}
+                            className="w-full p-4 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 placeholder-gray-500 dark:placeholder-gray-400"
                         />
-                        {formData.foto && <p className="mt-2 text-sm text-gray-600 dark:text-gray-400">Archivo seleccionado: {formData.foto.name}</p>}
                     </div>
                 </div>
 
@@ -191,28 +329,56 @@ export default function RecipeForm({ onRecipeSuccess }) {
                 <h3 className="text-2xl font-semibold text-gray-800 dark:text-gray-100 border-b-2 dark:border-gray-600 pb-3 pt-4">Ingredientes</h3>
                 <div className="space-y-4">
                     {ingredientes.map((ingrediente, index) => (
-                        <div key={index} className="flex gap-3 items-center">
-                            <input
-                                type="text"
-                                placeholder={`Ej: 200g de Harina`}
-                                value={ingrediente}
-                                onChange={(e) => handleListItemChange('ingredientes', index, e.target.value)}
-                                className="w-full p-3 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 focus:ring-2 focus:ring-green-500"
-                            />
+                        <div key={index} className="flex flex-col gap-3 p-4 border border-gray-200 dark:border-gray-700 rounded-lg">
+                            <div className="grid grid-cols-2 gap-4">
+                                <input
+                                    type="text"
+                                    placeholder="Nombre del ingrediente"
+                                    value={ingrediente.nombre}
+                                    onChange={(e) => handleIngredienteChange(index, 'nombre', e.target.value)}
+                                    className="w-full p-3 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100"
+                                    required
+                                />
+                                <input
+                                    type="text"
+                                    placeholder="Cantidad (ej: 200)"
+                                    value={ingrediente.cantidad}
+                                    onChange={(e) => handleIngredienteChange(index, 'cantidad', e.target.value)}
+                                    className="w-full p-3 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100"
+                                    required
+                                />
+                            </div>
+                            <div className="grid grid-cols-2 gap-4">
+                                <input
+                                    type="text"
+                                    placeholder="Unidad (ej: gramos)"
+                                    value={ingrediente.unidad}
+                                    onChange={(e) => handleIngredienteChange(index, 'unidad', e.target.value)}
+                                    className="w-full p-3 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100"
+                                    required
+                                />
+                                <input
+                                    type="text"
+                                    placeholder="Descripción (opcional)"
+                                    value={ingrediente.descripcion}
+                                    onChange={(e) => handleIngredienteChange(index, 'descripcion', e.target.value)}
+                                    className="w-full p-3 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100"
+                                />
+                            </div>
                             {ingredientes.length > 1 && (
                                 <button
                                     type="button"
-                                    onClick={() => handleRemoveListItem('ingredientes', index)}
-                                    className="text-red-500 hover:text-red-700 dark:text-red-400 dark:hover:text-red-300 text-3xl font-bold transition-colors"
+                                    onClick={() => handleRemoveIngrediente(index)}
+                                    className="self-end text-red-500 hover:text-red-700 dark:text-red-400 dark:hover:text-red-300 text-sm font-semibold"
                                 >
-                                    &times;
+                                    Eliminar ingrediente
                                 </button>
                             )}
                         </div>
                     ))}
                     <button
                         type="button"
-                        onClick={() => handleAddListItem('ingredientes')}
+                        onClick={handleAddIngrediente}
                         className="w-full py-3 px-4 bg-green-600 text-white font-semibold rounded-lg hover:bg-green-700 transition shadow-md"
                     >
                         + Agregar Ingrediente
@@ -223,28 +389,39 @@ export default function RecipeForm({ onRecipeSuccess }) {
                 <h3 className="text-2xl font-semibold text-gray-800 dark:text-gray-100 border-b-2 dark:border-gray-600 pb-3 pt-4">Pasos de Preparación</h3>
                 <div className="space-y-4">
                     {pasos.map((paso, index) => (
-                        <div key={index} className="flex gap-3 items-center">
+                        <div key={index} className="flex flex-col gap-3 p-4 border border-gray-200 dark:border-gray-700 rounded-lg">
+                            <div className="flex items-center gap-2 text-gray-600 dark:text-gray-400">
+                                <span className="font-semibold">Paso {paso.orden}</span>
+                            </div>
                             <textarea
-                                placeholder={`Paso ${index + 1}: Describe el paso de forma clara.`}
-                                value={paso}
-                                onChange={(e) => handleListItemChange('pasos', index, e.target.value)}
+                                placeholder="Describe el paso de forma clara"
+                                value={paso.descripcion}
+                                onChange={(e) => handlePasoChange(index, 'descripcion', e.target.value)}
                                 rows="3"
-                                className="w-full p-3 border border-gray-300 dark:border-gray-600 rounded-lg resize-none bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 focus:ring-2 focus:ring-purple-500"
+                                className="w-full p-3 border border-gray-300 dark:border-gray-600 rounded-lg resize-none bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100"
+                                required
+                            />
+                            <input
+                                type="url"
+                                placeholder="URL de la foto del paso (opcional)"
+                                value={paso.fotoUrl}
+                                onChange={(e) => handlePasoChange(index, 'fotoUrl', e.target.value)}
+                                className="w-full p-3 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100"
                             />
                             {pasos.length > 1 && (
                                 <button
                                     type="button"
-                                    onClick={() => handleRemoveListItem('pasos', index)}
-                                    className="text-red-500 hover:text-red-700 dark:text-red-400 dark:hover:text-red-300 text-3xl font-bold transition-colors"
+                                    onClick={() => handleRemovePaso(index)}
+                                    className="self-end text-red-500 hover:text-red-700 dark:text-red-400 dark:hover:text-red-300 text-sm font-semibold"
                                 >
-                                    &times;
+                                    Eliminar paso
                                 </button>
                             )}
                         </div>
                     ))}
                     <button
                         type="button"
-                        onClick={() => handleAddListItem('pasos')}
+                        onClick={handleAddPaso}
                         className="w-full py-3 px-4 bg-purple-600 text-white font-semibold rounded-lg hover:bg-purple-700 transition shadow-md"
                     >
                         + Agregar Paso
