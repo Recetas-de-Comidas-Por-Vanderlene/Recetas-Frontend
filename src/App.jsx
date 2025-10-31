@@ -12,7 +12,6 @@ import AllRecipes from './components/AllRecipes';
 import RecipeDetail from './components/RecipeDetail';
 import EditRecipe from './components/EditRecipe';
 
-// Definimos los tipos de vista principal que podemos tener
 const VIEWS = {
   HOME: 'home',
   RECIPE_FORM: 'recipeForm',
@@ -21,9 +20,7 @@ const VIEWS = {
 
 
 function App() {
-  // ----------------------------------------------------
-  // LÓGICA DEL MODO CLARO/OSCURO
-  // ----------------------------------------------------
+
   const [theme, setTheme] = useState(
     localStorage.getItem('theme') || 'light'
   );
@@ -43,14 +40,13 @@ function App() {
   };
   // ----------------------------------------------------
   
-  // ESTADOS DE AUTENTICACIÓN Y VISTA
+  
   const [mainView, setMainView] = useState(VIEWS.HOME);
   const [currentAuthView, setCurrentAuthView] = useState('hidden');
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [nombre, setNombre] = useState("");
   const [successMessage, setSuccessMessage] = useState(''); 
   
-  // --- Funciones de AUTH ---
   const handleLoginSuccess = (data) => {
     setNombre(data.nombre || "");
     setIsLoggedIn(true);
@@ -72,17 +68,17 @@ function App() {
     setMainView(VIEWS.HOME); 
   };
 
-  // --- Funciones para cambiar la vista principal ---
+ 
   const handleViewHome = () => setMainView(VIEWS.HOME);
   
   const handleViewAllRecipes = () => setMainView(VIEWS.ALL_RECIPES);
   
-  // Esta es la función que queremos pasar al botón "Crear Receta"
+
   const handleViewRecipeForm = () => {
     if (isLoggedIn) {
       setMainView(VIEWS.RECIPE_FORM);
     } else {
-      setCurrentAuthView('login'); // Pide login si no está logueado
+      setCurrentAuthView('login'); 
     }
   };
   
@@ -90,7 +86,6 @@ function App() {
     setMainView(VIEWS.HOME);
   };
   
-  // --- Funciones de Navegación/Modal ---
   const handleOpenLogin = () => setCurrentAuthView('login');
   const handleNavigateToSignup = () => setCurrentAuthView('register');
   const handleNavigateToLogin = () => setCurrentAuthView('login'); 
@@ -99,7 +94,6 @@ function App() {
     setSuccessMessage('');
   }
 
-  // Componente para la página de inicio
   const Home = () => (
     <main>
       <section className="py-12 px-4 md:px-8">
@@ -111,7 +105,6 @@ function App() {
     </main>
   );
 
-  // Componente protegido que verifica si el usuario está autenticado
   const ProtectedRoute = ({ children }) => {
     if (!isLoggedIn) {
       handleOpenLogin();
@@ -119,7 +112,7 @@ function App() {
     }
     return children;
   };
-  // --------------------------------------------------------
+  
 
   return (
     <div className={`min-h-screen bg-white dark:bg-gray-900 text-gray-900 dark:text-gray-100`}>
@@ -159,7 +152,6 @@ function App() {
       
       <FooterImage />
 
-      {/* MOSTRAR EL MENSAJE DE ÉXITO DE REGISTRO */}
       {successMessage && (
         <div className="fixed inset-0 bg-black bg-opacity-20 flex justify-center items-center z-50"> 
           <div className="bg-green-100 text-green-800 p-6 rounded-lg shadow-2xl text-center font-semibold text-lg animate-pulse">
@@ -168,14 +160,12 @@ function App() {
         </div>
       )}
 
-      {/* MODAL DE LOGIN/REGISTER (POSICIONADO ARRIBA A LA DERECHA) */}
+     
       {currentAuthView !== 'hidden' && !isLoggedIn && !successMessage && (
-        // CONTENEDOR EXTERNO: Solo es la capa negra (opacity-50)
+  
         <div className="fixed inset-0 bg-black bg-opacity-50 z-50"> 
-          {/* CONTENEDOR INTERIOR: Posicionamiento 'popover' y tamaño mínimo */}
           <div className="absolute top-16 right-4 bg-white dark:bg-gray-800 p-1 rounded-lg shadow-lg modal-sm-custom"> 
-            
-            {/* Botón de cierre más pequeño */}
+          
             <button
               className="absolute top-0.5 right-0.5 text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200 text-xs p-1"
               onClick={handleCloseModal}

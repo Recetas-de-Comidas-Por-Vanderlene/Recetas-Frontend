@@ -16,14 +16,12 @@ const Register = ({ onSignupSuccess, onNavigateToLogin }) => {
         name: '',
         email: '',
         password: '',
-        foto: '', // <-- Nuevo campo para la URL de la foto
+        foto: '',
     });
     
     const [errors, setErrors] = useState({});
     const [message, setMessage] = useState('');
     const [isSubmitting, setIsSubmitting] = useState(false);
-    
-    // Función para manejar cambios en los inputs (Sin cambios)
     const handleChange = (e) => {
         const { name, value } = e.target;
         setFormData(prevData => ({ ...prevData, [name]: value }));
@@ -34,7 +32,6 @@ const Register = ({ onSignupSuccess, onNavigateToLogin }) => {
         setMessage('');
     };
 
-    // Validación (Actualizada para no requerir 'foto' si se usa una por defecto)
     const validate = () => {
         let currentErrors = {};
         
@@ -56,7 +53,6 @@ const Register = ({ onSignupSuccess, onNavigateToLogin }) => {
         return Object.keys(currentErrors).length === 0;
     };
 
-    // Función para manejar el envío real al Backend
     const handleSubmit = async (e) => {
         e.preventDefault();
         setMessage('');
@@ -68,12 +64,11 @@ const Register = ({ onSignupSuccess, onNavigateToLogin }) => {
 
         setIsSubmitting(true);
         
-        // 🚨 CRÍTICO: Construir el objeto de datos con los 4 campos esperados 🚨
+   
         const dataToSend = {
-            nombre: formData.name, // Coincide con tu DTO
+            nombre: formData.name, 
             email: formData.email,
             password: formData.password,
-            // Si el campo está vacío, enviamos la URL por defecto, sino, la URL ingresada
             foto: formData.foto || DEFAULT_PHOTO_URL, 
         };
 
@@ -121,8 +116,7 @@ const Register = ({ onSignupSuccess, onNavigateToLogin }) => {
                         {message}
                     </div>
                 )}
-                
-                {/* Campo Nombre */}
+                          
                 <div>
                     <input
                         type="text"
@@ -135,8 +129,7 @@ const Register = ({ onSignupSuccess, onNavigateToLogin }) => {
                     />
                     {errors.name && <p className="mt-0 text-xs text-red-500">{errors.name}</p>}
                 </div>
-                
-                {/* Campo Correo Electrónico */}
+                           
                 <div>
                     <input
                         type="email"
@@ -149,7 +142,7 @@ const Register = ({ onSignupSuccess, onNavigateToLogin }) => {
                     />
                     {errors.email && <p className="mt-0 text-xs text-red-500">{errors.email}</p>}
                 </div>
-                {/* Campo Contraseña */}
+                
                 <div>
                     <input
                         type="password"
@@ -161,11 +154,11 @@ const Register = ({ onSignupSuccess, onNavigateToLogin }) => {
                         disabled={isSubmitting}
                     />
                     {errors.password && <p className="mt-0 text-xs text-red-500">{errors.password}</p>}
-                    {/* HINTS MÁS PEQUEÑOS */}
+                    
                     <p className="mt-0 text-xs text-gray-500 dark:text-gray-400">8+ caracteres, Mayúscula, Número.</p>
                 </div>
                 
-                {/* Botón de Registro COMPACTO */}
+              
                 <button
                     type="submit"
                     disabled={isSubmitting}
@@ -174,7 +167,7 @@ const Register = ({ onSignupSuccess, onNavigateToLogin }) => {
                     {isSubmitting ? 'Registrando...' : 'Crear Cuenta'}
                 </button>
 
-                {/* Enlace para volver al Login COMPACTO */}
+                
                 <div className="mt-1 text-center">
                     <button
                         type="button"
@@ -188,5 +181,4 @@ const Register = ({ onSignupSuccess, onNavigateToLogin }) => {
         </div>
     );
 };
-
 export default Register;

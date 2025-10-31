@@ -1,22 +1,22 @@
 // Guardar edición de comentario
-    const handleEditSave = async (commentId) => {
-        try {
-            const payload = {
-                comentario: editCommentText,
-                valoracion: editCommentRating,
-            };
-            const response = await fetch(`${API_BASE_URL}/api/recetas/${id}/comentarios/${commentId}`, {
-                method: 'PUT',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify(payload),
-            });
-            if (!response.ok) throw new Error('No se pudo editar el comentario');
-            setEditingCommentId(null);
-            await fetchComments();
-        } catch (err) {
-            alert('Error al editar el comentario: ' + err.message);
-        }
-    };
+const handleEditSave = async (commentId) => {
+    try {
+        const payload = {
+            comentario: editCommentText,
+            valoracion: editCommentRating,
+        };
+        const response = await fetch(`${API_BASE_URL}/api/recetas/${id}/comentarios/${commentId}`, {
+            method: 'PUT',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(payload),
+        });
+        if (!response.ok) throw new Error('No se pudo editar el comentario');
+        setEditingCommentId(null);
+        await fetchComments();
+    } catch (err) {
+        alert('Error al editar el comentario: ' + err.message);
+    }
+};
 import React, { useEffect, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 
@@ -31,14 +31,9 @@ const RecipeDetail = ({ isLoggedIn }) => {
     const [rating, setRating] = useState(0);
     const [error, setError] = useState(null);
     const [isLoading, setIsLoading] = useState(true);
-
-    // Estados para edición de comentario
     const [editingCommentId, setEditingCommentId] = useState(null);
     const [editCommentText, setEditCommentText] = useState('');
     const [editCommentRating, setEditCommentRating] = useState(0);
-
-
-    // Cargar receta y comentarios juntos (al inicio)
     const fetchRecipe = async () => {
         try {
             setIsLoading(true);
@@ -54,8 +49,6 @@ const RecipeDetail = ({ isLoggedIn }) => {
             setIsLoading(false);
         }
     };
-
-    // Solo recargar comentarios (después de comentar)
     const fetchComments = async () => {
         try {
             const response = await fetch(`${API_BASE_URL}/api/recetas/${id}`);
@@ -63,7 +56,6 @@ const RecipeDetail = ({ isLoggedIn }) => {
             const data = await response.json();
             setComments(data.comentarios || []);
         } catch (err) {
-            // No actualizar error global para no romper la UI
         }
     };
 
@@ -91,7 +83,6 @@ const RecipeDetail = ({ isLoggedIn }) => {
                 body: JSON.stringify(payload),
             });
             if (!response.ok) throw new Error('No se pudo guardar el comentario');
-            // Recargar solo los comentarios, no toda la receta
             await fetchComments();
             setNewComment('');
             setRating(0);
@@ -107,30 +98,26 @@ const RecipeDetail = ({ isLoggedIn }) => {
     return (
         <div className="max-w-3xl mx-auto px-4 py-8">
 
-            {/* Título */}
             <h1 className="text-3xl font-bold mb-4 text-gray-800 dark:text-gray-100">{recipe.titulo}</h1>
 
-                        {/* Debug: Mostrar valores para depuración */}
+            {/* Debug: Mostrar valores para depuración */}
 
-                        {/* Botón Editar Receta (solo si es el dueño) */}
-                        {isLoggedIn && String(recipe.autorId) === String(localStorage.getItem('userId')) && (
-                            <button
-                                className="bg-orange-500 hover:bg-orange-600 text-white font-semibold py-2 px-4 rounded-full mb-6"
-                                onClick={() => navigate(`/recetas/${id}/editar`)}
-                            >
-                                Editar receta
-                            </button>
-                        )}
+            {/* Botón Editar Receta (solo si es el dueño) */}
+            {isLoggedIn && String(recipe.autorId) === String(localStorage.getItem('userId')) && (
+                <button
+                    className="bg-orange-500 hover:bg-orange-600 text-white font-semibold py-2 px-4 rounded-full mb-6"
+                    onClick={() => navigate(`/recetas/${id}/editar`)}
+                >
+                    Editar receta
+                </button>
+            )}
 
-            {/* Foto */}
             {recipe.fotoUrl && (
                 <img src={recipe.fotoUrl} alt={recipe.titulo} className="w-full h-64 object-cover rounded-lg mb-6" />
             )}
 
-            {/* Descripción */}
             <p className="mb-4 text-gray-700 dark:text-gray-300">{recipe.descripcion}</p>
 
-            {/* Ingredientes */}
             <div className="mb-6">
                 <h2 className="text-xl font-semibold mb-2">Ingredientes</h2>
                 <ul className="list-disc list-inside">
@@ -148,7 +135,7 @@ const RecipeDetail = ({ isLoggedIn }) => {
                 </ul>
             </div>
 
-            {/* Paso a paso */}
+
             <div className="mb-6">
                 <h2 className="text-xl font-semibold mb-2">Paso a paso</h2>
                 <ol className="list-decimal list-inside">
@@ -171,7 +158,7 @@ const RecipeDetail = ({ isLoggedIn }) => {
                 </ol>
             </div>
 
-            {/* Tiempo, Dificultad, País */}
+
             <div className="flex flex-wrap gap-4 mb-6 text-gray-700 dark:text-gray-300">
                 {recipe.tiempo && (
                     <div>
@@ -190,7 +177,6 @@ const RecipeDetail = ({ isLoggedIn }) => {
                 )}
             </div>
 
-            {/* Comentarios y Valoraciones */}
             <div className="mb-6">
                 <h2 className="text-xl font-semibold mb-2">Comentarios y Valoraciones</h2>
                 {comments.length === 0 ? (
@@ -209,7 +195,7 @@ const RecipeDetail = ({ isLoggedIn }) => {
                                         />
                                         <div className="flex items-center mb-2">
                                             <span className="mr-2">Valoración:</span>
-                                            {[1,2,3,4,5].map(star => (
+                                            {[1, 2, 3, 4, 5].map(star => (
                                                 <button
                                                     type="button"
                                                     key={star}
@@ -232,7 +218,7 @@ const RecipeDetail = ({ isLoggedIn }) => {
                                         <span className="font-semibold">{c.usuario}:</span> {c.texto} {' '}
                                         <span className="text-yellow-500">{'★'.repeat(c.valoracion || 0)}</span>
                                         <span className="text-xs text-gray-400 ml-2">{c.fecha}</span>
-                                        {/* Mostrar botón solo si el comentario es del usuario actual */}
+
                                         {String(c.usuario?.id) === String(localStorage.getItem('userId')) && (
                                             <button
                                                 className="ml-2 text-blue-500 underline"
@@ -251,7 +237,6 @@ const RecipeDetail = ({ isLoggedIn }) => {
                 )}
             </div>
 
-            {/* Formulario de comentario */}
             {isLoggedIn && (
                 <form onSubmit={handleCommentSubmit} className="bg-gray-100 dark:bg-gray-700 p-4 rounded-lg">
                     <textarea
@@ -264,7 +249,7 @@ const RecipeDetail = ({ isLoggedIn }) => {
                     />
                     <div className="flex items-center mb-2">
                         <span className="mr-2">Valoración:</span>
-                        {[1,2,3,4,5].map(star => (
+                        {[1, 2, 3, 4, 5].map(star => (
                             <button
                                 type="button"
                                 key={star}

@@ -97,7 +97,6 @@ const AllRecipes = ({ isLoggedIn }) => {
                     Recetas del Mundo
                 </h1>
 
-                {/* El botón solo aparece si está logueado */}
                 {isLoggedIn && (
                     <motion.button
                         whileHover={{ scale: 1.05 }}
@@ -109,9 +108,7 @@ const AllRecipes = ({ isLoggedIn }) => {
                     </motion.button>
                 )}
             </div>
-            {/* FIN DE LA NUEVA SECCIÓN */}
 
-            {/* Botones para alternar vistas (Todas/Favoritos/Mis Recetas) */}
             <div className="flex justify-center space-x-4 mb-10">
                 <button
                     onClick={() => setView('all')}
@@ -124,7 +121,6 @@ const AllRecipes = ({ isLoggedIn }) => {
                     Todas las recetas
                 </button>
 
-                {/* Botón Mis Recetas (solo si está logueado) */}
                 {isLoggedIn && (
                     <button
                         onClick={() => setView('my')}
@@ -151,7 +147,7 @@ const AllRecipes = ({ isLoggedIn }) => {
                 </button>
             </div>
 
-            {/* Lista de Recetas */}
+
             <AnimatePresence mode="wait">
                 <motion.div
                     key={view}
@@ -172,7 +168,7 @@ const AllRecipes = ({ isLoggedIn }) => {
                                     whileHover={{ scale: 1.02 }}
                                     className="relative p-5 border border-gray-200 dark:border-gray-700 rounded-xl bg-white dark:bg-gray-800 shadow-sm hover:shadow-md transition-all"
                                 >
-                                    {/* Ícono de corazón */}
+
                                     <motion.button
                                         whileTap={{ scale: 0.9 }}
                                         onClick={() => handleFavoriteClick(recipe.id)}
@@ -187,7 +183,7 @@ const AllRecipes = ({ isLoggedIn }) => {
                                         </motion.span>
                                     </motion.button>
 
-                                    {/* Imagen y Contenido de la receta */}
+
                                     {recipe.fotoUrl ? (
                                         <img
                                             src={recipe.fotoUrl}
@@ -239,5 +235,4 @@ const AllRecipes = ({ isLoggedIn }) => {
         </div>
     );
 };
-
 export default AllRecipes;

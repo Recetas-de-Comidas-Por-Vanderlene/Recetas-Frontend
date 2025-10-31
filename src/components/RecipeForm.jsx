@@ -1,11 +1,7 @@
-// src/components/RecipeForm.jsx (Diseño de Página Completa)
-
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 
 const API_BASE_URL = 'http://localhost:8080';
-
-// Datos de países simulados
 const DUMMY_COUNTRIES = [
     { id: '3', nombre: 'Brasil' },
     { id: '4', nombre: 'México' },
@@ -40,12 +36,11 @@ export default function RecipeForm({ onRecipeSuccess }) {
     const [error, setError] = useState('');
     const [isSubmitting, setIsSubmitting] = useState(false);
     
-    // 💡 EFECTO: Simulación de carga de países (Frontend)
+
     useEffect(() => {
         setCountries(DUMMY_COUNTRIES);
     }, []);
 
-    // --- Funciones de Manejo de Inputs (se mantienen igual) ---
 
     const handleChange = (e) => {
         const { name, value } = e.target;
@@ -98,7 +93,6 @@ export default function RecipeForm({ onRecipeSuccess }) {
         });
     };
 
-    // --- Validación (se mantiene igual) ---
 
     const validate = () => {
         if (!formData.titulo || !formData.descripcion || !formData.paisId) {
@@ -114,7 +108,6 @@ export default function RecipeForm({ onRecipeSuccess }) {
             return false;
         }
 
-        // Validar ingredientes
         const ingredientesValidos = ingredientes.some(i => 
             i.nombre.trim() && i.cantidad.trim() && i.unidad.trim()
         );
@@ -123,7 +116,7 @@ export default function RecipeForm({ onRecipeSuccess }) {
             return false;
         }
 
-        // Validar pasos
+
         const pasosValidos = pasos.some(p => p.descripcion.trim());
         if (!pasosValidos) {
             setError('🚨 Debes describir al menos un paso.');
@@ -133,17 +126,12 @@ export default function RecipeForm({ onRecipeSuccess }) {
         return true;
     };
 
-
-    // --- SIMULACIÓN de Envío (se mantiene igual) ---
-
     const handleSubmit = async (e) => {
         e.preventDefault();
         setError('');
 
-        // Validación del formulario
         if (!validate()) return;
 
-        // Verificar si el usuario está logueado
         const token = localStorage.getItem('jwtToken');
         if (!token) {
             setError('🔐 Debes iniciar sesión para registrar una receta');
@@ -153,7 +141,6 @@ export default function RecipeForm({ onRecipeSuccess }) {
         setIsSubmitting(true);
 
         try {
-            // Preparar el objeto JSON con los campos requeridos
             const recetaData = {
                 titulo: formData.titulo,
                 descripcion: formData.descripcion,
@@ -178,7 +165,6 @@ export default function RecipeForm({ onRecipeSuccess }) {
                     }))
             };
 
-            // Enviar petición al backend como JSON
             const response = await fetch(`${API_BASE_URL}/api/recetas`, {
                 method: 'POST',
                 headers: {
@@ -193,7 +179,6 @@ export default function RecipeForm({ onRecipeSuccess }) {
                 throw new Error(errorData.message || 'Error al registrar la receta');
             }
 
-            // Éxito - limpiar formulario
             alert('✅ Receta registrada con éxito!');
             setFormData({
                 titulo: '',
@@ -205,8 +190,7 @@ export default function RecipeForm({ onRecipeSuccess }) {
             });
             setIngredientes(['']);
             setPasos(['']);
-            
-            // Llamar al callback de éxito si existe
+    
             if (onRecipeSuccess) {
                 onRecipeSuccess();
             }
@@ -218,29 +202,21 @@ export default function RecipeForm({ onRecipeSuccess }) {
         }
     };
 
-    // --- RENDERIZADO AJUSTADO A PÁGINA ---
-
     return (
-        // 💡 CAMBIO 1: max-w-3xl para más espacio. mx-auto para centrar.
-        // 💡 CAMBIO 2: py-10 px-4 para padding general. ELIMINAMOS mt-10.
+
         <div className="max-w-3xl mx-auto py-10 px-4 bg-white dark:bg-gray-800 shadow-xl rounded-lg">
-            
-            {/* TÍTULO */}
             <h2 className="text-4xl font-extrabold text-center text-gray-800 dark:text-gray-100 mb-8">
                 Cadastrar Nova Receta
             </h2>
-            
             <form onSubmit={handleSubmit} className="space-y-8"> 
-
                 {error && (
                     <div className="p-3 bg-red-100 text-red-700 dark:bg-red-900 dark:text-red-200 rounded text-center font-medium">
                         {error}
                     </div>
                 )}
                 
-                {/* 1. Campos Básicos */}
                 <div className="space-y-4">
-                     {/* Campos de texto y textarea */}
+
                       <input
                         type="text"
                         name="titulo"
@@ -293,8 +269,7 @@ export default function RecipeForm({ onRecipeSuccess }) {
                         className="w-full p-4 border border-gray-300 dark:border-gray-600 rounded-lg resize-none bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 placeholder-gray-500 dark:placeholder-gray-400 focus:ring-2 focus:ring-red-500"
                         required
                     />
-                    
-                    {/* Select de País (paisId) */}
+                
                     <select
                         name="paisId"
                         value={formData.paisId}
@@ -308,8 +283,6 @@ export default function RecipeForm({ onRecipeSuccess }) {
                             <option key={pais.id} value={pais.id} className="bg-white dark:bg-gray-700">{pais.nombre}</option>
                         ))}
                     </select>
-
-                    {/* URL de la Foto */}
                     <div>
                         <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
                             URL de la Foto de la Receta
@@ -324,8 +297,6 @@ export default function RecipeForm({ onRecipeSuccess }) {
                         />
                     </div>
                 </div>
-
-                {/* 2. Lista de Ingredientes */}
                 <h3 className="text-2xl font-semibold text-gray-800 dark:text-gray-100 border-b-2 dark:border-gray-600 pb-3 pt-4">Ingredientes</h3>
                 <div className="space-y-4">
                     {ingredientes.map((ingrediente, index) => (
@@ -385,7 +356,6 @@ export default function RecipeForm({ onRecipeSuccess }) {
                     </button>
                 </div>
 
-                {/* 3. Lista de Pasos */}
                 <h3 className="text-2xl font-semibold text-gray-800 dark:text-gray-100 border-b-2 dark:border-gray-600 pb-3 pt-4">Pasos de Preparación</h3>
                 <div className="space-y-4">
                     {pasos.map((paso, index) => (
@@ -427,8 +397,6 @@ export default function RecipeForm({ onRecipeSuccess }) {
                         + Agregar Paso
                     </button>
                 </div>
-
-                {/* Botón de Envío FINAL */}
                 <button
                     type="submit"
                     disabled={isSubmitting}

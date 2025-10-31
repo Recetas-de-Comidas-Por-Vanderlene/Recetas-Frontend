@@ -1,4 +1,3 @@
-// src/services/auth.js (Alterado)
 
 const API_URL = 'http://localhost:8080/api/auth';
 
@@ -14,9 +13,6 @@ export async function login(email, password) {
   });
 
   if (!response.ok) {
-   // Captura mensajes de error del backend (si los hay)
-//    const errorData = await response.json();
-//    throw new Error(errorData.message || 'Login failed');
 throw new Error('Login failed');
   }
 
@@ -27,8 +23,6 @@ throw new Error('Login failed');
  }
 }
 
-
-// 2. NUEVA FUNCIÓN para Registrar Usuario
 export async function register(nombre, email, password) {
     try {
         const response = await fetch(`${API_URL}/register`, {
@@ -36,7 +30,7 @@ export async function register(nombre, email, password) {
             headers: {
                 'Content-Type': 'application/json'
             },
-            body: JSON.stringify({ nombre, email, password }) // Envía los datos requeridos
+            body: JSON.stringify({ nombre, email, password })
         });
 
         if (!response.ok) {
@@ -45,7 +39,7 @@ export async function register(nombre, email, password) {
         }
 
         const data = await response.json();
-        return data; // Puede devolver un token o mensaje de éxito
+        return data; 
     } catch (error) {
         throw error;
     }

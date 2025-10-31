@@ -1,10 +1,10 @@
-// Función para decodificar JWT (base64)
-function parseJwt (token) {
+
+function parseJwt(token) {
   if (!token) return null;
   try {
     const base64Url = token.split('.')[1];
     const base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
-    const jsonPayload = decodeURIComponent(atob(base64).split('').map(function(c) {
+    const jsonPayload = decodeURIComponent(atob(base64).split('').map(function (c) {
       return '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2);
     }).join(''));
     return JSON.parse(jsonPayload);
@@ -41,17 +41,17 @@ const EditRecipe = () => {
         const response = await fetch(`${API_BASE_URL}/api/recetas/${id}`);
         if (!response.ok) throw new Error('No se pudo cargar la receta.');
         const data = await response.json();
-        // Si la receta tiene país como string, intenta mapearlo a un id
+
         let paisId = data.paisId;
         if (!paisId && data.pais) {
           const found = DUMMY_COUNTRIES.find(c => c.nombre === data.pais);
           paisId = found ? found.id : '';
         }
         setRecipe({ ...data, paisId });
-        // Mostrar autorId de la receta
+
         console.log('autorId de la receta:', data.autorId);
-        // Mostrar id del usuario autenticado
-  const token = localStorage.getItem('jwtToken');
+
+        const token = localStorage.getItem('jwtToken');
         const user = parseJwt(token);
         console.log('ID usuario autenticado (token):', user && (user.id || user.sub));
       } catch (err) {
@@ -69,7 +69,6 @@ const EditRecipe = () => {
 
   const handleSubmit = async e => {
     e.preventDefault();
-    // Prepara el payload solo con los campos requeridos
     const payload = {
       titulo: recipe.titulo,
       descripcion: recipe.descripcion,
@@ -92,7 +91,7 @@ const EditRecipe = () => {
     };
     console.log('Payload enviado:', payload);
     try {
-  const token = localStorage.getItem('jwtToken');
+      const token = localStorage.getItem('jwtToken');
       const response = await fetch(`${API_BASE_URL}/api/recetas/${id}`, {
         method: 'PUT',
         headers: {
@@ -102,12 +101,12 @@ const EditRecipe = () => {
         body: JSON.stringify(payload),
       });
       if (!response.ok) {
-        // Intenta leer el mensaje real del backend
+
         let errorMsg = 'No se pudo actualizar la receta.';
         try {
           const errorData = await response.json();
           if (errorData && errorData.mensaje) errorMsg = errorData.mensaje;
-        } catch {}
+        } catch { }
         throw new Error(errorMsg);
       }
       alert('Receta editada correctamente.');
@@ -316,5 +315,4 @@ const EditRecipe = () => {
     </div>
   );
 };
-
 export default EditRecipe;

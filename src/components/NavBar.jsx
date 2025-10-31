@@ -3,7 +3,6 @@ import { Link } from "react-router-dom";
 import { FaInstagram, FaFacebookF, FaTwitter } from "react-icons/fa";
 
 const NavBar = ({ isLoggedIn }) => {
-  // Se añadió 'cursor-pointer' para mejor UX
   const linkClasses = "text-white hover:text-gray-200 transition duration-300 px-2 py-1 cursor-pointer"; 
   const socialIconClasses = "text-black hover:text-gray-200 transition duration-300 text-lg";
 
@@ -15,7 +14,6 @@ const NavBar = ({ isLoggedIn }) => {
 
   return (
     <nav className="bg-orange-400 text-white p-4 shadow-xl flex justify-between items-center">
-      {/* Links de navegación */}
       <div className="flex space-x-6 font-semibold text-lg">
         <Link to="/" className={linkClasses}>
           Home
@@ -30,7 +28,6 @@ const NavBar = ({ isLoggedIn }) => {
         </Link>
       </div>
 
-      {/* Íconos sociales */}
       <div className="flex space-x-4">
         {socialLinks.map((social, index) => (
           <a
