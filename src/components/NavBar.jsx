@@ -1,9 +1,9 @@
-// src/components/NavBar.jsx
 import React from "react";
+import { Link } from "react-router-dom";
 import { FaInstagram, FaFacebookF, FaTwitter } from "react-icons/fa";
 
-const NavBar = () => {
-  const linkClasses = "text-white hover:text-gray-200 transition duration-300 px-2 py-1";
+const NavBar = ({ isLoggedIn }) => {
+  const linkClasses = "text-white hover:text-gray-200 transition duration-300 px-2 py-1 cursor-pointer"; 
   const socialIconClasses = "text-black hover:text-gray-200 transition duration-300 text-lg";
 
   const socialLinks = [
@@ -14,14 +14,20 @@ const NavBar = () => {
 
   return (
     <nav className="bg-orange-400 text-white p-4 shadow-xl flex justify-between items-center">
-      {/* Links de navegación */}
       <div className="flex space-x-6 font-semibold text-lg">
-        <a href="#home" className={linkClasses}>Home</a>
-        <a href="#recetas" className={linkClasses}>Recetas</a>
-        <a href="#contactos" className={linkClasses}>Contactos</a>
+        <Link to="/" className={linkClasses}>
+          Home
+        </Link>
+        
+        <Link to="/recetas" className={linkClasses}>
+          Recetas
+        </Link>
+        
+        <Link to="/contactos" className={linkClasses}>
+          Contactos
+        </Link>
       </div>
 
-      {/* Íconos sociales */}
       <div className="flex space-x-4">
         {socialLinks.map((social, index) => (
           <a

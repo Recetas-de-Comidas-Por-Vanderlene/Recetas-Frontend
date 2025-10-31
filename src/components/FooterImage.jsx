@@ -1,53 +1,48 @@
-// src/components/FooterImage.jsx
+// FooterSimpleFood.jsx (Minimalista Extremo - Solo Legal y Copyright)
 import React from 'react';
 
-// NOTA: Para este ejemplo, usaré imágenes de stock de Unsplash,
-// pero tú deberías usar las tuyas. Asume que las importaste o usaste URLs.
-// Por ahora, solo usaremos el fondo gris oscuro para simular el área.
-
-const FooterImage = () => {
-    // Definimos 6 imágenes para simular el banner
-    const images = [
-        'url(/path/to/img1.jpg)', 
-        'url(/path/to/img2.jpg)', 
-        'url(/path/to/img3.jpg)', 
-        'url(/path/to/img4.jpg)', 
-        'url(/path/to/img5.jpg)', 
-        'url(/path/to/img6.jpg)', 
+const FooterSimpleFood = () => {
+    
+    // Lista de enlaces legales y de contacto (ahora son los únicos enlaces)
+    const legalAndContactLinks = [
+        { title: "Contacto", href: "/contacto" },
+        { title: "Privacidad", href: "/privacidad" },
+        { title: "Términos", href: "/terminos" },
     ];
 
-    // La altura del contenedor será fija para replicar el banner
-    const bannerHeight = 'h-52 md:h-64'; 
-    
     return (
-        <div className={`relative w-full overflow-hidden ${bannerHeight}`}>
-            {/* Usamos Grid para dividir el espacio en 6 columnas (md:grid-cols-6)
-              En móviles, simplemente apilamos las imágenes si fuera necesario, 
-              pero para un banner se recomienda mantener la proporción con overflow. 
-            */}
-            
-            <div className="flex w-full h-full">
-                {images.map((img, index) => (
-                    <div
-                        key={index}
-                        // La clase 'flex-1' hace que todas ocupen el mismo ancho
-                        className={`flex-1 ${bannerHeight} bg-cover bg-center transition-transform duration-500 hover:scale-105`}
-                        // En un proyecto real, usarías la etiqueta <img /> o
-                        // cargarías una imagen aquí. Usamos un color/URL para simular.
-                        style={{
-                            backgroundImage: img,
-                            backgroundColor: `hsl(${index * 60}, 50%, 40%)` // Simulación de colores si no hay imagen
-                        }}
-                    />
-                ))}
-            </div>
+   
+        <footer className="bg-gray-900 text-gray-400 py-6">
+            <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-4">
+             
+                <div className="flex flex-col md:flex-row md:justify-between items-center pb-4 border-b border-gray-800">
+                   
+                    <div className="mb-4 md:mb-0">
+                        <h3 className="text-lg font-bold text-orange-500">
+                            Vuelta al Mundo
+                        </h3>
+                    </div>
 
-            {/* Este es el botón de acción flotante que se ve en tu diseño, si lo deseas */}
-            <div className="absolute bottom-4 right-4 z-10 p-2 bg-white rounded-full shadow-lg cursor-pointer">
-                <span className="text-xl">⬇️</span> {/* O un ícono de flecha */}
+                    <div className="flex flex-wrap justify-center md:justify-end space-x-3 text-xs">
+                        {legalAndContactLinks.map((link) => (
+                            <a 
+                                key={link.title}
+                                href={link.href}
+                                className="hover:text-orange-400 transition"
+                            >
+                                {link.title}
+                            </a>
+                        ))}
+                    </div>
+                </div>
+
+                <div className="mt-4 text-center text-xs text-gray-600">
+                    © {new Date().getFullYear()} Vuelta al Mundo. Todos los derechos reservados.
+                </div>
+                
             </div>
-        </div>
+        </footer>
     );
 };
 
-export default FooterImage;
+export default FooterSimpleFood;
