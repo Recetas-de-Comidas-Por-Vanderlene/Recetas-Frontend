@@ -1,5 +1,6 @@
 import React from 'react';
 
+
 const SectionIntro = ({ username }) => {
     return (
         <div className="max-w-6xl mx-auto text-center">

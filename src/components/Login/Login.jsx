@@ -1,7 +1,8 @@
 // src/components/Login.jsx (Código Final Minimalista y Compacto)
 
 import { useState } from "react";
-import { login } from "../services/auth";
+import { login } from "../../services/auth";
+
 
 export default function Login({ onLoginSuccess, onNavigateToSignup }) {
   const [email, setEmail] = useState("");

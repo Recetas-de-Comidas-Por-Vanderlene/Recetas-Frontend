@@ -1,30 +1,21 @@
+// src/App.js
+
 import React, { useState, useEffect } from 'react';
-import { Routes, Route, useNavigate, Navigate } from 'react-router-dom';
-import Hero from './components/Hero';
-import NavBar from './components/NavBar';
-import SectionIntro from './components/SectionIntro';
-import CountryFilter from './components/CountryFilter';
-import FooterImage from './components/FooterImage';
-import Login from './components/Login';
-import Register from './components/Register';
-import RecipeForm from './components/RecipeForm';
-import AllRecipes from './components/AllRecipes';
-import RecipeDetail from './components/RecipeDetail';
-import EditRecipe from './components/EditRecipe';
-
-const VIEWS = {
-  HOME: 'home',
-  RECIPE_FORM: 'recipeForm',
-  ALL_RECIPES: 'allRecipes',
-};
-
+// Eliminamos los imports de: Routes, Route, useNavigate, Navigate
+// Eliminamos los imports de: SectionIntro, CountryFilter, AllRecipes, RecipeDetail, EditRecipe, RecipeForm
+import Hero from './pages/Hero.jsx';
+import NavBar from './pages/NavBar.jsx';
+import Login from './components/Login/Login';
+import Register from './components/Register/Register.jsx';
+import FooterImage from './pages/FooterImage.jsx';
+import AppRoutes from "./routes/AppRoutes.jsx";
 
 function App() {
 
   const [theme, setTheme] = useState(
     localStorage.getItem('theme') || 'light'
   );
-
+  // ... (useEffect para theme y toggleTheme) ...
   useEffect(() => {
     const root = document.documentElement;
     if (theme === 'dark') {
@@ -40,8 +31,13 @@ function App() {
   };
   // ----------------------------------------------------
   
-  
-  const [mainView, setMainView] = useState(VIEWS.HOME);
+  // Eliminamos el estado 'mainView' y sus handlers, ya que la navegación la controla el router
+  // const [mainView, setMainView] = useState(VIEWS.HOME);
+  // const handleViewHome = () => setMainView(VIEWS.HOME); // Se eliminan
+  // const handleViewAllRecipes = () => setMainView(VIEWS.ALL_RECIPES); // Se eliminan
+  // const handleViewRecipeForm = () => { ... } // Se eliminan o se simplifican si son necesarios
+  // const handleRecipeSuccess = () => { setMainView(VIEWS.HOME); }; // Se modifica
+
   const [currentAuthView, setCurrentAuthView] = useState('hidden');
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [nombre, setNombre] = useState("");
@@ -65,25 +61,12 @@ function App() {
   const handleLogout = () => {
     setIsLoggedIn(false);
     setNombre("");
-    setMainView(VIEWS.HOME); 
   };
 
- 
-  const handleViewHome = () => setMainView(VIEWS.HOME);
-  
-  const handleViewAllRecipes = () => setMainView(VIEWS.ALL_RECIPES);
-  
-
-  const handleViewRecipeForm = () => {
-    if (isLoggedIn) {
-      setMainView(VIEWS.RECIPE_FORM);
-    } else {
-      setCurrentAuthView('login'); 
-    }
-  };
-  
   const handleRecipeSuccess = () => {
-    setMainView(VIEWS.HOME);
+    // Ya no necesitamos setMainView, el router se encargará de esto con useNavigate si fuera necesario
+    // pero por ahora, solo quitamos la modal de login si estuviera activa
+    setCurrentAuthView('hidden');
   };
   
   const handleOpenLogin = () => setCurrentAuthView('login');
@@ -94,25 +77,10 @@ function App() {
     setSuccessMessage('');
   }
 
-  const Home = () => (
-    <main>
-      <section className="py-12 px-4 md:px-8">
-        <SectionIntro username={nombre} />
-      </section>
-      <section className="py-12">
-        <CountryFilter />
-      </section>
-    </main>
-  );
+  // Eliminamos la definición de Home y ProtectedRoute
+  // const Home = () => (...)
+  // const ProtectedRoute = ({ children }) => (...)
 
-  const ProtectedRoute = ({ children }) => {
-    if (!isLoggedIn) {
-      handleOpenLogin();
-      return <Navigate to="/" />;
-    }
-    return children;
-  };
-  
 
   return (
     <div className={`min-h-screen bg-white dark:bg-gray-900 text-gray-900 dark:text-gray-100`}>
@@ -128,30 +96,18 @@ function App() {
         isLoggedIn={isLoggedIn}
       />
 
-      <Routes>
-        <Route path="/" element={<Home />} />
-        <Route path="/recetas" element={
-          <div className="py-12 px-4 md:px-8">
-            <AllRecipes isLoggedIn={isLoggedIn} />
-          </div>
-        } />
-        <Route path="/receta/:id" element={<RecipeDetail isLoggedIn={isLoggedIn} />} />
-        <Route path="/recetas/:id/editar" element={
-          <ProtectedRoute>
-            <EditRecipe />
-          </ProtectedRoute>
-        } />
-        <Route path="/crear-receta" element={
-          <ProtectedRoute>
-            <div className="py-12 px-4 md:px-8">
-              <RecipeForm onRecipeSuccess={handleRecipeSuccess} />
-            </div>
-          </ProtectedRoute>
-        } />
-      </Routes>
+      {/* --- EL BLOQUE <Routes> HA SIDO REEMPLAZADO POR AppRoutes --- */}
+      <AppRoutes
+        isLoggedIn={isLoggedIn}
+        handleOpenLogin={handleOpenLogin} // Necesario para ProtectedRoute
+        handleRecipeSuccess={handleRecipeSuccess}
+        nombre={nombre} // Necesario para el componente Home
+      />
+      {/* ----------------------------------------------------------- */}
       
       <FooterImage />
 
+      {/* ... (Lógica de successMessage y modal de Login/Register) ... */}
       {successMessage && (
         <div className="fixed inset-0 bg-black bg-opacity-20 flex justify-center items-center z-50"> 
           <div className="bg-green-100 text-green-800 p-6 rounded-lg shadow-2xl text-center font-semibold text-lg animate-pulse">
@@ -160,7 +116,7 @@ function App() {
         </div>
       )}
 
-     
+      
       {currentAuthView !== 'hidden' && !isLoggedIn && !successMessage && (
   
         <div className="fixed inset-0 bg-black bg-opacity-50 z-50"> 
