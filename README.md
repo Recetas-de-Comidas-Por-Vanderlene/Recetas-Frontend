@@ -124,6 +124,3 @@ La aplicación se conecta a una API REST en `http://localhost:8080/api/` con los
 ## 📄 Licencia
 
 Este proyecto está bajo la Licencia MIT - ver el archivo [LICENSE.md](LICENSE.md) para más detalles.
-
----
- By:Vanderlene Oliveira
